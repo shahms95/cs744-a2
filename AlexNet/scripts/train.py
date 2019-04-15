@@ -137,7 +137,9 @@ def train(net_configname, batch_size, devices=None, target=None,
                                                                 labels.get_shape()))
 
         if net_configname == "single":
+            print("Going in alexnetmodes")
             (net, logprob, total_loss,train_op, global_step) = alexnetmodes.original(images, labels, num_classes,batch_num * batch_size, devices)
+            print("Coming out of alexnetmodes")
         else:
             (net, logprob, total_loss,train_op, global_step) = alexnetmodes.distribute(images, labels, num_classes,batch_num * batch_size, devices)
 
