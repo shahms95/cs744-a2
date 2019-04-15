@@ -1,0 +1,8 @@
+nohup: ignoring input
+2019-04-15 16:45:47.468838: E tensorflow/core/distributed_runtime/rpc/grpc_server_lib.cc:466] Invalid argument: Could not parse port for local server from "localhost:c220g5-120102.wisc.cloudlab.us".
+Traceback (most recent call last):
+  File "startserver.py", line 45, in <module>
+    server = tf.train.Server(clusterinfo, job_name=FLAGS.job_name, task_index=FLAGS.task_index)
+  File "/usr/local/lib/python2.7/dist-packages/tensorflow/python/training/server_lib.py", line 148, in __init__
+    self._server = c_api.TF_NewServer(self._server_def.SerializeToString())
+tensorflow.python.framework.errors_impl.InvalidArgumentError: Could not parse port for local server from "localhost:c220g5-120102.wisc.cloudlab.us".
