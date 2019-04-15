@@ -36,14 +36,19 @@ def original(images, labels, num_classes, total_num_examples, devices=None, is_t
     def train(total_loss, global_step, total_num_steps):
         """Build train operations"""
         # Compute gradients
+        print('Train checkpoint 1')
         with tf.control_dependencies([total_loss]):
             opt = configure_optimizer(global_step, total_num_steps)
+            print('Train checkpoint 2')
             grads = opt.compute_gradients(total_loss)
+            print('Train checkpoint 3')
 
         # Apply gradients.
         apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
+        print('Train checkpoint 4')
 
         with tf.control_dependencies([apply_gradient_op]):
+            print('Train checkpoint 5')
             return tf.no_op(name='train')
 
     with tf.device(devices[0]):
