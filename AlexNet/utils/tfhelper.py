@@ -7,13 +7,10 @@ import tensorflow as tf
 
 def initialize_op():
     """Operation to initialize global and local variables"""
-    print("Entering tfhelper.initialize_op ")
     if hasattr(tf, 'global_variables_initializer'):
-        print("Exiting 1 tfhelper.initialize_op ")
         return tf.group(tf.global_variables_initializer(),
                         tf.local_variables_initializer())
     else:
-        print("Exiting 2 tfhelper.initialize_op ")
         return tf.group(tf.initialize_all_variables(),
                         tf.initialize_local_variables())
 

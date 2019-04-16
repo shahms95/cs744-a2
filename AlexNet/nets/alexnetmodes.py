@@ -36,19 +36,14 @@ def original(images, labels, num_classes, total_num_examples, devices=None, is_t
     def train(total_loss, global_step, total_num_steps):
         """Build train operations"""
         # Compute gradients
-        print('Train checkpoint 1')
         with tf.control_dependencies([total_loss]):
             opt = configure_optimizer(global_step, total_num_steps)
-            print('Train checkpoint 2')
             grads = opt.compute_gradients(total_loss)
-            print('Train checkpoint 3')
 
         # Apply gradients.
         apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
-        print('Train checkpoint 4')
 
         with tf.control_dependencies([apply_gradient_op]):
-            print('Train checkpoint 5')
             return tf.no_op(name='train')
 
     with tf.device(devices[0]):
@@ -66,15 +61,65 @@ def original(images, labels, num_classes, total_num_examples, devices=None, is_t
 
 
 def distribute(images, labels, num_classes, total_num_examples, devices, is_train=True):
-    pass #placeholder
+    # pass #placeholder
 
     # Put your code here
     # You can refer to the "original" function above, it is for the single-node version.
     # 1. Create global steps on the parameter server node. You can use the same method that the single-machine program uses.
+    def configure_optimizer(global_step, total_num_steps):
+        """Return a configured optimizer"""
+        def exp_decay(start, tgtFactor, num_stairs):
+            decay_step = total_num_steps / (num_stairs - 1)
+            decay_rate = (1 / tgtFactor) ** (1 / (num_stairs - 1))
+            return tf.train.exponential_decay(start, global_step, decay_step, decay_rate,
+                                              staircase=True)
+
+        def lparam(learning_rate, momentum):
+            return {
+                'learning_rate': learning_rate,
+                'momentum': momentum
+            }
+
+        return HybridMomentumOptimizer({
+            'weights': lparam(exp_decay(0.001, 250, 4), 0.9),
+            'biases': lparam(exp_decay(0.002, 10, 2), 0.9),
+        })
+
+
     # 2. Configure your optimizer using HybridMomentumOptimizer.
+
+    def train(total_loss, global_step, total_num_steps):
+        """Build train operations"""
+        # Compute gradients
+        with tf.control_dependencies([total_loss]):
+            opt = configure_optimizer(global_step, total_num_steps)
+            grads = opt.compute_gradients(total_loss)
+
+        # Apply gradients.
+        apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
+
+        with tf.control_dependencies([apply_gradient_op]):
+            return tf.no_op(name='train')
     # 3. Construct graph replica by splitting the original tensors into sub tensors. (hint: take a look at tf.split )
     # 4. For each worker node, create replica by calling alexnet_inference and computing gradients.
     #    Reuse the variable for the next replica. For more information on how to reuse variables in TensorFlow,
     #    read how TensorFlow Variables work, and considering using tf.variable_scope.
     # 5. On the parameter server node, apply gradients.
     # 6. return required values.
+
+    for device in devices:
+        print("Device : ", device)
+
+    # with tf.device(devices[0]):
+    #     builder = ModelBuilder()
+    # print('num_classes: ' + str(num_classes))
+    #     net, logits, total_loss = alexnet_inference(builder, images, labels, num_classes)
+
+    #     if not is_train:
+    #         return alexnet_eval(net, labels)
+
+    #     global_step = builder.ensure_global_step()
+    # print('total_num_examples: ' + str(total_num_examples))
+    #     train_op = train(total_loss, global_step, total_num_examples)
+    # return net, logits, total_loss, train_op, global_step
+
