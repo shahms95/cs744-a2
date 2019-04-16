@@ -12,7 +12,7 @@ import numpy as np
 
 import tensorflow as tf
 
-from ../ import datasets
+from .. import datasets
 from ../nets import alexnetmodes
 from ../utils import tfhelper
 from ../utils import misc
