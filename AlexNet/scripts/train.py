@@ -157,6 +157,7 @@ def train(net_configname, batch_size, devices=None, target=None,
             print(qr.name)
         print("Train checkpoint 9")
 
+        print(target)
         config = tf.ConfigProto(log_device_placement=False, allow_soft_placement=True)
         with tf.Session(target, config=config) as sess:
             print("Train checkpoint 10")
