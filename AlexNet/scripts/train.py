@@ -12,10 +12,10 @@ import numpy as np
 
 import tensorflow as tf
 
-from .. import datasets
-from ..nets import alexnetmodes
-from ..utils import tfhelper
-from ..utils import misc
+from ../ import datasets
+from ../nets import alexnetmodes
+from ../utils import tfhelper
+from ../utils import misc
 
 
 net_configs = {
