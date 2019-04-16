@@ -143,21 +143,29 @@ def train(net_configname, batch_size, devices=None, target=None,
         else:
             (net, logprob, total_loss,train_op, global_step) = alexnetmodes.distribute(images, labels, num_classes,batch_num * batch_size, devices)
 
+        print("Train checkpoint 6")
         tfhelper.scalar_summary('total_loss', total_loss)
         summary_op = tfhelper.merge_all_summaries()
 
+        print("Train checkpoint 7")
         # model saver
         saver = tf.train.Saver(tf.trainable_variables())
 
         # print some information
+        print("Train checkpoint 8")
         for qr in tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS):
             print(qr.name)
+        print("Train checkpoint 9")
 
         config = tf.ConfigProto(log_device_placement=False, allow_soft_placement=True)
         with tf.Session(target, config=config) as sess:
+            print("Train checkpoint 10")
             sess.run(tfhelper.initialize_op())
+            print("Train checkpoint 11")
             coord = tf.train.Coordinator()
+            print("Train checkpoint 12")
             queue_threads = tf.train.start_queue_runners(sess, coord)
+            print("Train checkpoint 13")
 
             print('{} threads started for queue'.format(len(queue_threads)))
 
